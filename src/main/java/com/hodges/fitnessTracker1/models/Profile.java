@@ -10,6 +10,7 @@ public class Profile {
     @Id
     @GeneratedValue
     private Long id;
+    private String email;
 
     private String firstName;
     private String lastName;
@@ -20,7 +21,7 @@ public class Profile {
     @OneToOne
     private User user;
 
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Activity> activities = new HashSet<>();
 
     public Profile() {
@@ -88,5 +89,13 @@ public class Profile {
 
     public void setActivities(Set<Activity> activities) {
         this.activities = activities;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

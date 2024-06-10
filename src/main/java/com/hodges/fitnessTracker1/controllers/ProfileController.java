@@ -4,6 +4,7 @@ import com.hodges.fitnessTracker1.models.Profile;
 import com.hodges.fitnessTracker1.models.User;
 import com.hodges.fitnessTracker1.repositories.ProfileRepository;
 import com.hodges.fitnessTracker1.repositories.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,8 +19,10 @@ public class ProfileController {
     private UserRepository userRepository;
 
     @GetMapping
-    public String getAllProfiles(Model model){
-        model.addAttribute("profiles",profileRepository.findAll());
+    public String getAllProfiles(Model model, HttpSession session){
+        Long userId = (Long) session.getAttribute("user");
+        model.addAttribute("profiles",profileRepository.findByUserId(userId));
+//        model.addAttribute("profiles",profileRepository.findAll());
         return "profile/list";
     }
 

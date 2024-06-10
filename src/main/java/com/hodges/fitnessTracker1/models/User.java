@@ -1,9 +1,8 @@
 package com.hodges.fitnessTracker1.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 public class User {
@@ -12,13 +11,22 @@ public class User {
     @GeneratedValue
     private Long id;
 
+    @NotEmpty
     private String username;
-    private String email;
 
-    @OneToOne(mappedBy = "user")
+    @NotEmpty
+    private String hashedPassword;
+
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 
     public User() {
+    }
+    public User(String username, String hashedPassword){
+        this.username=username;
+        this.hashedPassword=encoder.encode(hashedPassword);
     }
 
     public Long getId() {
@@ -37,13 +45,6 @@ public class User {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public Profile getProfile() {
         return profile;
@@ -51,5 +52,16 @@ public class User {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = encoder.encode(hashedPassword);
+    }
+    public boolean isMatchingPassword(String password) {
+        return encoder.matches(password, hashedPassword);
     }
 }
